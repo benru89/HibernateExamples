@@ -1,33 +1,52 @@
 package com.sopra.formacion.dao;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 
 @Entity
 public class Programador {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String nombre;
 	private String apellidos;
 	private int nomina;
 	private String tecnologia;
 	
-	@Embedded
-	private Direccion direccion;
 	
-	@Embedded
-	@AttributeOverrides({@AttributeOverride(name = "calle", column = @Column(name = "DIR_CALL_WORK")),
-	@AttributeOverride(name = "ciudad", column = @Column(name = "DIR_CIUDAD_WORK")),
-	@AttributeOverride(name = "codigoPostal", column = @Column(name = "DIR_CP_WORK"))})
-	private Direccion workDireccion;
+	
+	@ElementCollection
+	@JoinTable(name = "PROGS_DIRECCIONES", joinColumns = @JoinColumn(name = "PROG_ID"))
+	@GenericGenerator(name = "hilo-gen", strategy = "hilo")
+	@CollectionId(columns = { @Column(name = "DIR_ID")}, generator = "hilo-gen", type= @Type(type = "long"))
+	private Collection<Direccion> direccion = new ArrayList<Direccion>();
+	
+
+	public Collection<Direccion> getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(Collection<Direccion> direccion) {
+		this.direccion = direccion;
+	}
+
+	public Programador() {
+	}
 	
 	public Programador(long id, String nombre, String apellidos, int nomina,
 			String tecnologia, Direccion direccion) {
@@ -37,10 +56,6 @@ public class Programador {
 		this.apellidos = apellidos;
 		this.nomina = nomina;
 		this.tecnologia = tecnologia;
-		this.direccion = direccion;
-	}
-
-	public Programador() {
 	}
 
 	public long getId() {
@@ -83,20 +98,5 @@ public class Programador {
 		this.tecnologia = tecnologia;
 	}
 
-	public Direccion getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(Direccion direccion) {
-		this.direccion = direccion;
-	}
-
-	public Direccion getWorkDireccion() {
-		return workDireccion;
-	}
-
-	public void setWorkDireccion(Direccion workDireccion) {
-		this.workDireccion = workDireccion;
-	}
-
+	
 }

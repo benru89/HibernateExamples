@@ -14,14 +14,17 @@ public class App {
 
 	public static void main(String[] args) {
 
+		Direccion dir1=new Direccion("Calle Amparo, 7", "Madrid", 28013);
+		Direccion dir2=new Direccion("Calle Alcala, 494", "Madrid", 28022);
 		
 		Programador p1 = new Programador();
 		p1.setNombre("David");
 		p1.setApellidos("Cuesta");
 		p1.setTecnologia("Java");
 		p1.setNomina(9000);
-		p1.setDireccion(new Direccion("Calle Amparo, 7", "Madrid", 28013));
-		p1.setWorkDireccion(new Direccion("Calle Alcala, 494", "Madrid", 28022));
+		p1.getDireccion().add(dir1);
+		p1.getDireccion().add(dir2);
+		
 		// Antes de este punto los objetos estan en el estado Transient
 
 		Session session = null;
@@ -44,7 +47,7 @@ public class App {
 			@SuppressWarnings("unchecked")
 			List<Programador> resultList = q.list();
 			
-			System.out.println("Número de programadores:" + resultList.size());
+			System.out.println("NÃºmero de programadores:" + resultList.size());
 			for (Programador next : resultList) {
 				System.out.println("Siguiente empleado: " + next.getApellidos() + ", " + next.getNombre());
 			}
