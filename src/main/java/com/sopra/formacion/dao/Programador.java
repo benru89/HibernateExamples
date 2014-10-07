@@ -3,23 +3,23 @@ package com.sopra.formacion.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.persistence.Column;
+import javax.persistence.Cacheable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
-import org.hibernate.annotations.CollectionId;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
 public class Programador {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -28,23 +28,10 @@ public class Programador {
 	private int nomina;
 	private String tecnologia;
 	
-	
-	
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROGS_DIRECCIONES", joinColumns = @JoinColumn(name = "PROG_ID"))
-	@GenericGenerator(name = "hilo-gen", strategy = "hilo")
-	@CollectionId(columns = { @Column(name = "DIR_ID")}, generator = "hilo-gen", type= @Type(type = "long"))
 	private Collection<Direccion> direccion = new ArrayList<Direccion>();
 	
-
-	public Collection<Direccion> getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(Collection<Direccion> direccion) {
-		this.direccion = direccion;
-	}
-
 	public Programador() {
 	}
 	
@@ -96,6 +83,14 @@ public class Programador {
 
 	public void setTecnologia(String tecnologia) {
 		this.tecnologia = tecnologia;
+	}
+	
+	public Collection<Direccion> getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(Collection<Direccion> direccion) {
+		this.direccion = direccion;
 	}
 
 	

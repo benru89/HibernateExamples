@@ -1,9 +1,6 @@
 package com.sopra.formacion;
 
-import java.util.List;
-
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -25,8 +22,7 @@ public class App {
 		p1.getDireccion().add(dir1);
 		p1.getDireccion().add(dir2);
 		
-		// Antes de este punto los objetos estan en el estado Transient
-
+		//Antes de este punto los objetos estan en el estado Transient
 		Session session = null;
 		Transaction tx = null;
 		try {
@@ -40,25 +36,25 @@ public class App {
 			// 4. Commiteamos la sesion y ejecutamos la tx contra la BBDD
 			tx.commit();
 
+			session.close();
 			// En este punto los objetos pasan a estado Persistent
 
-			Query q = session.createQuery("From Programador");
+			session = HibernateUtil.getSessionFactory().openSession();
+			Programador prog1 = (Programador) session.get(Programador.class, Long.parseLong("1"));
+			session.close();
 			
-			@SuppressWarnings("unchecked")
-			List<Programador> resultList = q.list();
-			
-			System.out.println("NÃºmero de programadores:" + resultList.size());
-			for (Programador next : resultList) {
-				System.out.println("Siguiente empleado: " + next.getApellidos() + ", " + next.getNombre());
-			}
-
+			session = HibernateUtil.getSessionFactory().openSession();
+			Programador prog2 = (Programador) session.get(Programador.class, Long.parseLong("1"));
+			session.close();
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
 			e.printStackTrace();
 		} finally {
-			session.close();
-			// Y aqui los objetos se convierten en Detached
+			if (session.isOpen())
+			{
+				session.close();
+			}
 		}
 
 	}
